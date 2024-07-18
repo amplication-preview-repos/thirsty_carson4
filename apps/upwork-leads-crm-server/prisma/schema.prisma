@@ -1,0 +1,72 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Lead {
+  id               String            @id @default(cuid())
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  name             String?
+  company          String?
+  upworkProfile    String?
+  priority         EnumLeadPriority?
+  projectCost      Float?
+  estimateInHours  Int?
+  briefDescription String?
+  comments         Comment[]
+  tasks            Task[]
+  responsibleUser  String?
+}
+
+model Stage {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String?
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  description String?
+  dateAndTime DateTime?
+  lead        Lead?     @relation(fields: [leadId], references: [id])
+  leadId      String?
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content   String?
+  lead      Lead?    @relation(fields: [leadId], references: [id])
+  leadId    String?
+}
+
+model User {
+  id        String        @id @default(cuid())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  firstName String?
+  lastName  String?
+  username  String        @unique
+  email     String?       @unique
+  password  String
+  roles     Json
+  name      String?
+  role      EnumUserRole?
+}
+
+enum EnumLeadPriority {
+  Option1
+}
+
+enum EnumUserRole {
+  Option1
+}
